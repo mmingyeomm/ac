@@ -30,6 +30,22 @@ app.post('/deploy', (req, res) => {
 
   const contractCode = req.body.contract_code;
   
+  // Path to the lib.rs file
+  const libRsPath = path.join(path.resolve(__dirname, '..'), 'programs', 'ac', 'src', 'lib.rs');
+  
+  // Write the contract code to lib.rs
+  console.log('Writing contract code to:', libRsPath);
+  try {
+    fs.writeFileSync(libRsPath, contractCode);
+    console.log('Successfully wrote contract code to lib.rs');
+  } catch (writeError) {
+    console.error('Error writing contract code to lib.rs:', writeError);
+    return res.status(500).json({ 
+      error: 'Failed to write contract code to lib.rs', 
+      details: writeError.message 
+    });
+  }
+  
   // Execute anchor deploy command
   const anchorPath = path.resolve(__dirname, '..');
   
